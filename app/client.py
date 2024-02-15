@@ -28,7 +28,7 @@ async def send_messages(context, messages: list, secret_box: SecretBox):
                 sent_message = enc_message
                 await asyncio.sleep(delay)
                 await socket.send_string(sent_message)
-                print(f"Sent message: {sent_message} {delay} delay")
+                print(f"Sent message: [{CLIENT_NAME}] {sent_message} {delay} delay")
     except zmq.error.ZMQError as e:
         print(f"ZeroMQ error occurred: {e}")
     except Exception as e:
