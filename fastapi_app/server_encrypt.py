@@ -1,9 +1,10 @@
 import os
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from nacl.secret import SecretBox
 from nacl.encoding import HexEncoder
 from nacl.exceptions import CryptoError
+from fastapi_app.schemas.request_models import DecryptedRequest, DecryptedResponse
 
 load_dotenv()
 
@@ -16,19 +17,18 @@ SECRET_BOX = SecretBox(bytes.fromhex(SECRET_KEY))
 
 
 @app.post("/receiver")
-async def receive_messages(request: Request):
-    request_data = await request.json()
+async def receive_messages(request: DecryptedRequest):
     try:
-        client_name = request_data.get("client_name")
-        encrypted_message_hex = request_data.get("encrypted_message_hex")
+        client_name = request.client_name
+        encrypted_message_hex = request.encrypted_message_hex
         encrypted_message = bytes.fromhex(encrypted_message_hex)
         decrypted_message = SECRET_BOX.decrypt(
             encrypted_message, encoder=HexEncoder
         ).decode()
-        response = {
-            "client_name": client_name,
-            "decrypted_message": decrypted_message,
-        }
+        response = DecryptedResponse(
+            client_name=client_name,
+            decrypted_message=decrypted_message,
+        )
         print(response)
         return response
 
