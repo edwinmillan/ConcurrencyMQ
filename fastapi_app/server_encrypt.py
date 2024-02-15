@@ -18,6 +18,18 @@ SECRET_BOX = SecretBox(bytes.fromhex(SECRET_KEY))
 
 @app.post("/receiver")
 async def receive_messages(request: DecryptedRequest):
+    """
+    Receive encrypted messages from clients and decrypt them.
+
+    Args:
+        request (DecryptedRequest): The request object containing the client name and encrypted message.
+
+    Returns:
+        DecryptedResponse: The response object containing the client name and decrypted message.
+
+    Raises:
+        HTTPException: If decryption fails or the input is invalid.
+    """
     try:
         client_name = request.client_name
         encrypted_message_hex = request.encrypted_message_hex

@@ -7,6 +7,15 @@ CLIENT_NAME = str(uuid.uuid4())[:8]
 
 
 async def send_message(message: str) -> str:
+    """
+    Sends a message to the receiver endpoint.
+
+    Args:
+        message (str): The message to be sent.
+
+    Returns:
+        str: The response from the server.
+    """
     async with httpx.AsyncClient() as client:
         response = await client.post(
             "http://localhost:8000/receiver",

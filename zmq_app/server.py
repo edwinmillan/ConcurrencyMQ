@@ -11,6 +11,17 @@ load_dotenv()
 
 
 async def receive_messages(context, secret_box: SecretBox):
+    """
+    Receive messages from the ZeroMQ socket and decrypt them using the provided secret box.
+
+    Args:
+        context (zmq.Context): The ZeroMQ context.
+        secret_box (SecretBox): The secret box used for message decryption.
+
+    Raises:
+        zmq.error.ZMQError: If a ZeroMQ error occurs.
+        Exception: If an unexpected error occurs.
+    """
     try:
         with context.socket(zmq.PULL) as socket:
             socket.bind("tcp://*:5555")

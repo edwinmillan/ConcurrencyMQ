@@ -5,6 +5,18 @@ app = FastAPI()
 
 @app.post("/receiver")
 async def receive_messages(request: Request):
+    """
+    Receive messages from the client.
+
+    Args:
+        request (Request): The incoming request object.
+
+    Returns:
+        dict: The response containing the client name and message.
+
+    Raises:
+        HTTPException: If the input is invalid.
+    """
     request_data = await request.json()
     try:
         client_name = request_data.get("client_name")

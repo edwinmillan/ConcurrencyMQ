@@ -11,12 +11,37 @@ load_dotenv()
 
 
 def encrypt_message(message: str, secret_box: SecretBox) -> bytes:
+    """
+    Encrypts a message using a secret box.
+
+    Args:
+        message (str): The message to be encrypted.
+        secret_box (SecretBox): The secret box used for encryption.
+
+    Returns:
+        bytes: The encrypted message.
+    """
     return secret_box.encrypt(message.encode(), encoder=HexEncoder)
 
 
 async def send_messages(
     messages: list, secret_box: SecretBox, client: httpx.AsyncClient, client_name: str
 ) -> str:
+    """
+    Sends a list of messages to a receiver.
+
+    Args:
+        messages (list): The list of messages to send.
+        secret_box (SecretBox): The secret box used for encryption.
+        client (httpx.AsyncClient): The HTTP client used for sending requests.
+        client_name (str): The name of the client.
+
+    Returns:
+        str: The response from the receiver.
+
+    Raises:
+        httpx.HTTPError: If there is an error sending the message.
+    """
     for message in messages:
         encrypted_message = encrypt_message(message, secret_box).hex()
         delay = random.randint(1, 10) / 10

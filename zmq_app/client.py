@@ -18,6 +18,18 @@ def encrypt_message(message: str, secret_box: SecretBox) -> bytes:
 
 
 async def send_messages(context, messages: list, secret_box: SecretBox):
+    """
+    Sends a list of messages asynchronously using ZeroMQ.
+
+    Args:
+        context (zmq.Context): The ZeroMQ context.
+        messages (list): The list of messages to send.
+        secret_box (SecretBox): The secret box used for message encryption.
+
+    Raises:
+        zmq.error.ZMQError: If a ZeroMQ error occurs.
+        Exception: If an unexpected error occurs.
+    """
     try:
         with context.socket(zmq.PUSH) as socket:
             socket.connect("tcp://localhost:5555")
