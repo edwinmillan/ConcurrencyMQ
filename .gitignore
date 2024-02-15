@@ -1,0 +1,12 @@
+# Virtual environment
+.venv/
+__pypackages__/
+
+# Cache files
+.cache/
+*.pyc
+__pycache__/
+
+# Distribution / Build
+dist/
+build/
