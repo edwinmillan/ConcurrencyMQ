@@ -14,6 +14,16 @@ CLIENT_NAME = str(uuid.uuid4())[:8]
 
 
 def encrypt_message(message: str, secret_box: SecretBox) -> bytes:
+    """
+    Encrypts a message using a secret box.
+
+    Args:
+        message (str): The message to be encrypted.
+        secret_box (SecretBox): The secret box used for encryption.
+
+    Returns:
+        bytes: The encrypted message.
+    """
     return secret_box.encrypt(message.encode(), encoder=HexEncoder)
 
 
