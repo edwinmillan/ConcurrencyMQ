@@ -1,36 +1,68 @@
 import httpx
 import asyncio
 import uuid
+import random
 
 
-CLIENT_NAME = str(uuid.uuid4())[:8]
-
-
-async def send_message(message: str) -> str:
+async def send_messages(
+    messages: list, client: httpx.AsyncClient, client_name: str
+):
     """
-    Sends a message to the receiver endpoint.
+    Sends a list of messages to the receiver endpoint.
 
     Args:
-        message (str): The message to be sent.
+        messages (list): The list of messages to be sent.
+        client (httpx.AsyncClient): The HTTP client used to send the messages.
+        client_name (str): The name of the client sending the messages.
+
+    Raises:
+        httpx.HTTPError: If there is an error while sending the message.
 
     Returns:
-        str: The response from the server.
+        None
     """
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            "http://localhost:8000/receiver",
-            json={
-                "client_name": CLIENT_NAME,
+    for message in messages:
+        try:
+            delay = random.randint(1, 10) / 10
+            await asyncio.sleep(delay)
+            body = {
+                "client_name": client_name,
                 "message": message,
-            },
-        )
-        print(response.json())
-        return response.json()
+            }
+            response = await client.post(
+                "http://localhost:8000/receiver",
+                json=body,
+            )
+            response.raise_for_status()
+            print(f"Sent message: {message} {delay} delay")
+        except httpx.HTTPError as e:
+            print(f"Failed to send message: {e}")
 
 
 async def main():
-    messages = [f"[{CLIENT_NAME}] {i+1}-{str(uuid.uuid4())}" for i in range(10)]
-    await asyncio.gather(*[send_message(message) for message in messages])
+    desired_clients = 3
+    message_batch_size = 10
+
+    clients = [str(uuid.uuid4())[:8] for _ in range(desired_clients)]
+
+    while True:
+        tasks = []
+        async with httpx.AsyncClient() as client:
+            for client_name in clients:
+                messages = [
+                    f"[{client_name}] {i+1}-{str(uuid.uuid4())}"
+                    for i in range(message_batch_size)
+                ]
+                tasks.append(
+                    send_messages(
+                        messages=messages, client=client, client_name=client_name
+                    )
+                )
+
+            await asyncio.gather(*tasks)
+            delay = random.randint(1, 5)
+            print(f"Resting for {delay} seconds")
+            await asyncio.sleep(delay)
 
 
 if __name__ == "__main__":

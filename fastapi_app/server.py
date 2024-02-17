@@ -1,31 +1,31 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi_app.schemas.request_models import SimpleRequest, SimpleResponse
 
 app = FastAPI()
 
 
 @app.post("/receiver")
-async def receive_messages(request: Request):
+async def receive_messages(request: SimpleRequest):
     """
-    Receive messages from the client.
+    Receives messages from the client and returns a response.
 
     Args:
-        request (Request): The incoming request object.
+        request (SimpleRequest): The request object containing the client name and message.
 
     Returns:
-        dict: The response containing the client name and message.
+        SimpleResponse: The response object containing the client name and message.
 
     Raises:
         HTTPException: If the input is invalid.
     """
-    request_data = await request.json()
     try:
-        client_name = request_data.get("client_name")
-        message = request_data.get("message")
+        client_name = request.client_name
+        message = request.message
 
-        response = {
-            "client_name": client_name,
-            "message": message,
-        }
+        response = SimpleResponse(
+            client_name=client_name,
+            message=message,
+        )
         print(response)
         return response
 
