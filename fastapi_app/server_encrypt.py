@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from nacl.secret import SecretBox
 from nacl.encoding import HexEncoder
 from nacl.exceptions import CryptoError
-from fastapi_app.schemas.request_models import DecryptedRequest, DecryptedResponse
+from fastapi_app.schemas.request_models import DecryptRequest, DecryptedResponse
 
 load_dotenv()
 
@@ -17,12 +17,12 @@ SECRET_BOX = SecretBox(bytes.fromhex(SECRET_KEY))
 
 
 @app.post("/receiver")
-async def receive_messages(request: DecryptedRequest):
+async def receive_messages(request: DecryptRequest):
     """
     Receive encrypted messages from clients and decrypt them.
 
     Args:
-        request (DecryptedRequest): The request object containing the client name and encrypted message.
+        request (DecryptRequest): The request object containing the client name and encrypted message.
 
     Returns:
         DecryptedResponse: The response object containing the client name and decrypted message.
