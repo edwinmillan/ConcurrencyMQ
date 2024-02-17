@@ -1,7 +1,17 @@
 from pydantic import BaseModel
 
 
-class DecryptedRequest(BaseModel):
+class SimpleRequest(BaseModel):
+    client_name: str
+    message: str
+
+
+class SimpleResponse(BaseModel):
+    client_name: str
+    message: str
+
+
+class DecryptRequest(BaseModel):
     client_name: str
     encrypted_message_hex: str
 
